@@ -1,4 +1,5 @@
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.sql.functions import udf
 
 
 def get_flight_schema():
@@ -60,3 +61,18 @@ def read_autoloader(spark, path, checkpoint_location):
       .load(path)
   
   return streaming_df
+
+def my_split(str):
+    resStr=""
+    arr = str.split(" ")
+    for x in arr:
+       resStr= resStr + x[0:1].upper() + x[1:len(x)] + " "
+    return resStr
+
+
+@udf(returnType=StringType(), useArrow=True) 
+def my_split_udf(str):
+    return my_split(str)
+
+# def split_transform(df):
+#   return df.withColumn("split_val", my_split_udf(col("UniqueCarrier")))
