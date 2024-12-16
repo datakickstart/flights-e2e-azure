@@ -42,7 +42,7 @@ jobs:
       - name: Run unit tests
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID }}
         run: |
           pytest tests
@@ -52,7 +52,7 @@ jobs:
       - run: databricks bundle validate --target test_automated
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
   deploy:
     if: github.event.pull_request.merged == true
@@ -75,7 +75,7 @@ jobs:
         run: databricks bundle deploy --target test_automated
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Run notebook validation
         shell: bash
@@ -84,4 +84,4 @@ jobs:
           databricks bundle run notebook_validation_job -t test_automated --refresh-all 2>&1 | tee output.log
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_TST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
