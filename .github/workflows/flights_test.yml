@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements.txt -r
+      - run: pip install -r requirements.txt
 
       #----------------------------------------------
       #              run test suite
