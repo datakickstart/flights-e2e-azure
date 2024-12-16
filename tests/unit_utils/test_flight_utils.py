@@ -15,5 +15,5 @@ def test_cleaned_time_str():
     input = "222"
     result = flight_utils.clean_time_str(input)
 
-    expected = "0222"
+    expected = "02:22"
     assert result == expected
