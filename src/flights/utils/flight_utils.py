@@ -70,7 +70,10 @@ def my_split(str):
        resStr= resStr + x[0:1].upper() + x[1:len(x)] + " "
     return resStr
 
+def clean_time_str(source_str):
+    padded = source_str.replace("NA", "").zfill(4)
+    return padded
 
 @udf(returnType=StringType(), useArrow=True) 
-def my_split_udf(str):
-    return my_split(str)
+def clean_time_udf(str):
+    return clean_time_str(str)

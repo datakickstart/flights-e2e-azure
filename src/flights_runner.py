@@ -35,7 +35,7 @@ df_transformed = (
           .transform(shared_transforms.add_metadata_columns)
     )
 
-df_transformed2 = df_transformed.withColumn("split_val", flight_utils.my_split_udf(col("UniqueCarrier")))
+df_transformed2 = df_transformed.withColumn("CRSDepTime", flight_utils.clean_time_udf(col("CRSDepTime")))
 
 print(f"Reading data from {path}")
 df_transformed.write.format("delta").mode("append").option("mergeSchema", "true").saveAsTable(raw_table_name)
