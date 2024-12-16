@@ -35,15 +35,22 @@ targets:
     workspace:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
 
+  test_automated:
+    mode: production
+    workspace:
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      user_name: ${workspace.current_user.userName}
+    variables:
+      database: flights_staging
+      flights_test_schema: flights_validation_test
+      flights_dlt_schema: flights_test
+
   staging:
-    # For staging deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
     mode: production
     workspace:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
-      root_path: /Shared/.bundle/${bundle.target}/${bundle.name}
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       user_name: ${workspace.current_user.userName}
     variables:
@@ -53,14 +60,10 @@ targets:
 
   # The 'prod' target, used for production deployment.
   prod:
-    # For production deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
     mode: production
     workspace:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
-      root_path: /Shared/.bundle/${bundle.target}/${bundle.name}
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     variables:
       database: flights_prod
       flights_test_schema: flights_validation_prod
