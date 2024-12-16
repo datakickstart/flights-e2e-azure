@@ -62,6 +62,7 @@ def read_autoloader(spark, path, checkpoint_location):
   
   return streaming_df
 
+
 def my_split(str):
     resStr=""
     arr = str.split(" ")
@@ -73,6 +74,3 @@ def my_split(str):
 @udf(returnType=StringType(), useArrow=True) 
 def my_split_udf(str):
     return my_split(str)
-
-# def split_transform(df):
-#   return df.withColumn("split_val", my_split_udf(col("UniqueCarrier")))
