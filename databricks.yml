@@ -36,10 +36,6 @@ targets:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
 
   test_automated:
-    # For staging deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
     mode: production
     workspace:
       root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
@@ -51,10 +47,6 @@ targets:
       flights_dlt_schema: flights_test
 
   staging:
-    # For staging deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
     mode: production
     workspace:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
@@ -68,10 +60,6 @@ targets:
 
   # The 'prod' target, used for production deployment.
   prod:
-    # For production deployments, we only have a single copy, so we override the
-    # workspace.root_path default of
-    # /Users/${workspace.current_user.userName}/.bundle/${bundle.target}/${bundle.name}
-    # to a path that is not specific to the current user.
     mode: production
     workspace:
       host: https://adb-7923129632668114.14.azuredatabricks.net/
