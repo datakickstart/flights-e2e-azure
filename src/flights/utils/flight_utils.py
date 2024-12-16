@@ -72,7 +72,8 @@ def my_split(str):
 
 def clean_time_str(source_str):
     padded = source_str.replace("NA", "").zfill(4)
-    return padded
+    new_str = f"{padded[:2]}:{padded[2:]}"
+    return new_str
 
 @udf(returnType=StringType(), useArrow=True) 
 def clean_time_udf(str):
