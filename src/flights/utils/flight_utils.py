@@ -1,4 +1,5 @@
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.sql.functions import udf
 
 
 def get_flight_schema():
@@ -60,3 +61,20 @@ def read_autoloader(spark, path, checkpoint_location):
       .load(path)
   
   return streaming_df
+
+
+def my_split(str):
+    resStr=""
+    arr = str.split(" ")
+    for x in arr:
+       resStr= resStr + x[0:1].upper() + x[1:len(x)] + " "
+    return resStr
+
+def clean_time_str(source_str):
+    padded = source_str.replace("NA", "").zfill(4)
+    new_str = f"{padded[:2]}:{padded[2:]}"
+    return new_str
+
+@udf(returnType=StringType(), useArrow=True) 
+def clean_time_udf(str):
+    return clean_time_str(str)
