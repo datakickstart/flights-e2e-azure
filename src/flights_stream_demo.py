@@ -40,7 +40,7 @@ run_bronze = dbutils.widgets.get('run_bronze')
 TABLE_NAME = f"{catalog}.{database}.flights_demo_raw"
 BRONZE_TABLE_NAME = f"{catalog}.{database}.flights_ss_bronze_{demo_type}"
 
-raw_checkpoint_version = "demo1.1"
+raw_checkpoint_version = "demo1.3"
 bronze_checkpoint_version = "demo1.1"
 silver_checkpoint_version = "demo1.1"
 
@@ -105,19 +105,35 @@ if run_bronze == 'true':
 # COMMAND ----------
 
 from pyspark.sql.functions import struct, array, to_json, col, replace, lit, expr, current_timestamp, lpad, when, right, left, substr, to_timestamp, concat
-# from pyspark.sql.functions import col, lit, concat, trim, concat_ws
 from pyspark.sql import functions as F
 
+def time_transformations(df):
+    date_str_expr = expr("""concat(cast(Year as string),'-',
+        lpad(cast(Month as string),2,'0'),'-',
+        lpad(cast(DayOfMonth as string),2,'0'))"""
+    )
+    
+    timestamp_str_expr = concat(
+      left("CRSDepTime",lit('2')), 
+      lit(':'), 
+      right("CRSDepTime",lit('2'))
+    )
+
+    transformed_df = (
+      df.withColumn("CRSArrTime", replace("CRSArrTime", lit("NA")).cast("string"))
+        .withColumn("DepTime", lpad("DepTime",4, "0"))
+        .withColumn("date_str", date_str_expr)
+       .withColumn("timestamp_str", timestamp_str_expr)
+        .withColumn("timestamp", expr("try_to_timestamp(concat(date_str, ' ', timestamp_str))"))
+        .withColumn("event_date", col("timestamp").cast("date"))
+    )
+    return transformed_df
+
 if run_bronze == 'true':
-  transformed_df = (streaming_df
-      .withColumn("CRSArrTime", replace("CRSArrTime", lit("NA")).cast("string"))
-      .withColumn("DepTime", lpad("DepTime",4, "0"))
-      .withColumn("date_str", expr("concat(cast(Year as string),'-',lpad(cast(Month as string),2,'0'),'-',lpad(cast(DayOfMonth as string),2,'0'))"))
-      .withColumn("timestamp_str", 
-                  concat(left("CRSDepTime",lit('2')), lit(':'), right("CRSDepTime",lit('2'))))
-      .withColumn("timestamp", expr("try_to_timestamp(concat(date_str, ' ', timestamp_str))"))
-      .withColumn("event_date", col("timestamp").cast("date"))
-      .withColumn("created_timestamp", current_timestamp())
+  transformed_df = (
+    streaming_df
+      .transform(time_transformations)
+      .withColumn("updated_timestamp", current_timestamp())
   )
 
   query = (
@@ -131,10 +147,6 @@ if run_bronze == 'true':
       .trigger(availableNow=True)
       .toTable(BRONZE_TABLE_NAME)
   )
-
-# COMMAND ----------
-
-print(schema.fieldNames())
 
 # COMMAND ----------
 
